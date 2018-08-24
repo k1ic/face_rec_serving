@@ -36,60 +36,30 @@ def _save_ckpt(self, step, loss_profile):
     self.saver.save(self.sess, ckpt)
 
 
-def train(self):
-    loss_ph = self.framework.placeholders
-    loss_mva = None; profile = list()
 
-    batches = self.framework.shuffle()
-    loss_op = self.framework.loss
-
-    for i, (x_batch, datum) in enumerate(batches):
-        if not i: self.say(train_stats.format(
-            self.FLAGS.lr, self.FLAGS.batch,
-            self.FLAGS.epoch, self.FLAGS.save
-        ))
-
-        feed_dict = {
-            loss_ph[key]: datum[key] 
-                for key in loss_ph }
-        feed_dict[self.inp] = x_batch
-        feed_dict.update(self.feed)
-
-        fetches = [self.train_op, loss_op, self.summary_op] 
-        fetched = self.sess.run(fetches, feed_dict)
-        loss = fetched[1]
-
-        if loss_mva is None: loss_mva = loss
-        loss_mva = .9 * loss_mva + .1 * loss
-        step_now = self.FLAGS.load + i + 1
-
-        self.writer.add_summary(fetched[2], step_now)
-
-        form = 'step {} - loss {} - moving ave loss {}'
-        self.say(form.format(step_now, loss, loss_mva))
-        profile += [(loss, loss_mva)]
-
-        ckpt = (i+1) % (self.FLAGS.save // self.FLAGS.batch)
-        args = [step_now, profile]
-        if not ckpt: _save_ckpt(self, *args)
-
-    if ckpt: _save_ckpt(self, *args)
 
 def return_predict(self, im,img):
+    print('return_predict')
     assert isinstance(im, np.ndarray), \
 				'Image is not a np.ndarray'
     h, w, _ = im.shape
     im = self.framework.resize_input(im)
+    print('h,w',h,w)
     this_inp = np.expand_dims(im, 0)
+    print("this_inp")
     feed_dict = {self.inp : this_inp}
-
+    print("feed_dict")
+    print(self.out,len(feed_dict))
+    print(len(self.sess.run(self.out, feed_dict)))
     out = self.sess.run(self.out, feed_dict)[0]
+    print("out")
     _out = out
     boxes = self.framework.findboxes(out)
     if img is not None:
         self.framework.postprocess(self.sess.run(self.out, feed_dict)[0], img,True)
     threshold = self.FLAGS.threshold
     boxesInfo = list()
+    print('return_predict',len(boxesInfo))
     for box in boxes:
         tmpBox = self.framework.process_box(box, h, w, threshold)
         if tmpBox is None:
@@ -115,7 +85,7 @@ def return_predict(self, im,img):
                 "w":str(int(tmpBox[1]-tmpBox[0])),
                 "h":str(int(tmpBox[3]-tmpBox[2]))}
         })
-    # print(boxesInfo)
+    print(boxesInfo)
     # print('=====',json.dumps(boxesInfo)) 
     return json.dumps(boxesInfo)
 

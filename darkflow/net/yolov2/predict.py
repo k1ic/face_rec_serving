@@ -18,6 +18,7 @@ def _softmax(x):
     return out
 
 def findboxes(self, net_out):
+	print("findboxes")
 	# meta
 	meta = self.meta
 	boxes = list()

@@ -25,12 +25,9 @@ class TFNet(object):
 	# imported methods
 	_get_fps = help._get_fps
 	say = help.say
-	train = flow.train
-	camera = help.camera
 	predict = flow.predict
 	return_predict = flow.return_predict
 	to_darknet = help.to_darknet
-	build_train_op = help.build_train_op
 	load_from_ckpt = help.load_from_ckpt
 
 	def __init__(self, FLAGS, darknet = None):
