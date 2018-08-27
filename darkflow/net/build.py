@@ -134,12 +134,7 @@ class TFNet(object):
 			self.say('Running entirely on CPU')
 			cfg['device_count'] = {'GPU': 0}
 
-		if self.FLAGS.train: self.build_train_op()
-		
-		if self.FLAGS.summary is not None:
-			self.summary_op = tf.summary.merge_all()
-			self.writer = tf.summary.FileWriter(self.FLAGS.summary + 'train')
-		# print('cfg',**cfg)
+
 		self.sess = tf.Session(config = tf.ConfigProto(**cfg))
 		self.sess.run(tf.global_variables_initializer())
 
@@ -148,8 +143,7 @@ class TFNet(object):
 			max_to_keep = self.FLAGS.keep)
 		if self.FLAGS.load != 0: self.load_from_ckpt()
 		
-		if self.FLAGS.summary is not None:
-			self.writer.add_graph(self.sess.graph)
+		
 
 	def savepb(self):
 		"""

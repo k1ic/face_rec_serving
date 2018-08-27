@@ -13,7 +13,7 @@ def cliHandler(args):
             this = os.path.abspath(os.path.join(os.path.curdir, d))
             if not os.path.exists(this): os.makedirs(this)
     _get_dir([FLAGS.imgdir, FLAGS.binary, FLAGS.backup, 
-             os.path.join(FLAGS.imgdir,'out'), FLAGS.summary])
+             os.path.join(FLAGS.imgdir,'out')])
 
     # fix FLAGS.load to appropriate type
     try: FLAGS.load = int(FLAGS.load)
